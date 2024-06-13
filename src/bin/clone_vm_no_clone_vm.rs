@@ -16,7 +16,8 @@ fn main() {
                        0, std::ptr::null_mut()) == -1 {
             panic!("{:?}", std::io::Error::last_os_error());
         }
-    }*/
+    }
+    */
 
     for clone_vm in [false, true] {
         for bench_type in [
@@ -130,7 +131,7 @@ fn main() {
                     loop {
                         std::thread::sleep(std::time::Duration::from_millis(5));
 
-                        if stats.end_barrier.load(Ordering::Acquire) == 192 {
+                        if stats.end_barrier.load(Ordering::Acquire) == 32 {
                             let iters = stats.cum_iters.load(Ordering::Relaxed);
                             let time = stats.cum_time.load(Ordering::Relaxed);
 
