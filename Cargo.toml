@@ -3,4 +3,17 @@ name = "linux_thread_vs_process"
 version = "0.1.0"
 edition = "2021"
 
+[package]
+name = "thread_vs_process"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "lib"
+path = "src/lib.rs"
+
+[features]
+nightly = []
+
 [dependencies]
+libc = "0.2.155"
