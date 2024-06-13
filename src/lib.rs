@@ -34,14 +34,13 @@ pub enum BenchType {
 }
 
 pub struct Statistics {
-    job: AtomicUsize,
-    threads: AtomicUsize,
-    start_barrier: AtomicUsize,
-    end_barrier: AtomicUsize,
-    cum_time: AtomicUsize,
-    cum_iters: AtomicUsize,
-
-    bench_type: UnsafeCell<BenchType>,
+    pub job: AtomicUsize,
+    pub threads: AtomicUsize,
+    pub start_barrier: AtomicUsize,
+    pub end_barrier: AtomicUsize,
+    pub cum_time: AtomicUsize,
+    pub cum_iters: AtomicUsize,
+    pub bench_type: UnsafeCell<BenchType>,
 }
 
 pub fn bench(job_id: usize, core_id: usize, stats: &Statistics) {
