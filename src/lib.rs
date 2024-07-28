@@ -44,7 +44,7 @@ pub struct Statistics {
 }
 
 pub fn bench(job_id: usize, core_id: usize, stats: &Statistics) {
-    // Wait for our job to be ready
+    // Wait for job to be ready
     while stats.job.load(Ordering::Acquire) != job_id {
         std::thread::sleep(std::time::Duration::from_millis(5));
     }
@@ -54,7 +54,6 @@ pub fn bench(job_id: usize, core_id: usize, stats: &Statistics) {
     // Get the number of threads for this benchmark
     let threads = stats.threads.load(Ordering::Relaxed);
     if core_id >= threads {
-        // We're not participating this round
         stats.end_barrier.fetch_add(1, Ordering::Release);
         return;
     }
@@ -140,7 +139,7 @@ pub fn bench(job_id: usize, core_id: usize, stats: &Statistics) {
 
 #[no_mangle]
 extern "C" fn child(core_id: usize, stats: &Statistics) {
-    // Pin to a specific core to dodge the scheduler
+    // Pin to a specific core to avoid scheduler
     pin_core(core_id);
 
     for job_id in 1.. {
