@@ -2,36 +2,32 @@
 #![feature(adt_const_params)]
 
 use lib::*;
-use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::atomic::Ordering;
 
 fn main() {
-    /*
     // Create `/proc`
-    std::fs::create_dir_all("/proc").unwrap();
+    // std::fs::create_dir_all("/proc").unwrap();
+
     // Mount procfs
-    unsafe {
-        while libc::umount(c"/proc".as_ptr()) != -1 {}
-        if libc::mount(c"proc".as_ptr(), c"/proc".as_ptr(),
-                       c"proc".as_ptr(),
-                       0, std::ptr::null_mut()) == -1 {
-            panic!("{:?}", std::io::Error::last_os_error());
-        }
-    }
-    */
+    // unsafe {
+    //     while libc::umount(c"/proc".as_ptr()) != -1 {}
+    //     if libc::mount(c"proc".as_ptr(), c"/proc".as_ptr(),
+    //                    c"proc".as_ptr(),
+    //                    0, std::ptr::null_mut()) == -1 {
+    //         panic!("{:?}", std::io::Error::last_os_error());
+    //     }
+    // }
 
     for clone_vm in [false, true] {
         for bench_type in [
             BenchType::MmapWriteMunmap,
             BenchType::MmapWriteMunmapPopulate,
-            /*
             BenchType::LinearAlloc(256),
             BenchType::LinearAlloc(1024),
             BenchType::LinearAlloc(8192),
             BenchType::LinearAllocPopulate(256),
             BenchType::LinearAllocPopulate(1024),
-            BenchType::LinearAllocPopulate(8192),*/
-
-            /*
+            BenchType::LinearAllocPopulate(8192),
             BenchType::LinearAlloc(256),
             BenchType::LinearAlloc(512),
             BenchType::LinearAlloc(1024),
@@ -45,7 +41,7 @@ fn main() {
             BenchType::LinearAllocPopulate(4096),
             BenchType::LinearAllocPopulate(8192),
             BenchType::MmapWriteMunmap,
-            BenchType::MmapWriteMunmapPopulate,*/
+            BenchType::MmapWriteMunmapPopulate,
         ] {
             unsafe {
                 #[derive(Debug, Default)]
@@ -71,7 +67,6 @@ fn main() {
                     args.flags = libc::CLONE_VM as u64;
                 }
 
-                // Create shared stats
                 let stats = libc::mmap(
                     std::ptr::null_mut(),
                     std::mem::size_of::<Statistics>(),
@@ -107,7 +102,6 @@ fn main() {
                         inout("rsi") std::mem::size_of::<CloneArgs>() => _,
                     );
 
-                    // Save the child PID
                     children.push(child);
                 }
 
@@ -118,14 +112,12 @@ fn main() {
                 );
                 for job_threads in 1..=32 {
                     // Update job info
-                    stats.threads.store(job_threads, Ordering::Relaxed);
                     stats.cum_iters.store(0, Ordering::Relaxed);
                     stats.cum_time.store(0, Ordering::Relaxed);
                     stats.start_barrier.store(0, Ordering::Relaxed);
                     stats.end_barrier.store(0, Ordering::Relaxed);
                     *stats.bench_type.get() = bench_type;
 
-                    // Signal to start job
                     stats.job.fetch_add(1, Ordering::Release);
 
                     loop {
@@ -143,7 +135,6 @@ fn main() {
                     }
                 }
 
-                // Wait for all children to exit
                 for child in children {
                     libc::kill(child as i32, libc::SIGKILL);
                 }
