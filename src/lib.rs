@@ -58,7 +58,6 @@ pub fn bench(job_id: usize, core_id: usize, stats: &Statistics) {
         return;
     }
 
-    // Local iteration count
     let mut iters = 0;
 
     // Start barrier
