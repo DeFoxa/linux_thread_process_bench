@@ -79,7 +79,7 @@ fn main() {
                 let stats = &*(stats as *const Statistics);
 
                 let mut children = Vec::new();
-                for core_id in 0..192 {
+                for core_id in 0..32 {
                     let mut stack = vec![0u8; 128 * 1024];
                     args.stack = stack.as_mut_ptr() as u64;
                     args.stack_size = stack.len() as u64;
